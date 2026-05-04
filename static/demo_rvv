@@ -1,0 +1,29 @@
+#include <stdint.h>
+#include <string.h>
+
+#define N (1024 * 1024)
+#define ITERS 100
+
+static int32_t a[N], b[N], c[N];
+
+__attribute__((noinline))
+void vec_add(const int32_t *a, const int32_t *b, int32_t *c, size_t n) {
+    for (size_t i = 0; i < n; i++) {
+        c[i] = a[i] + b[i];
+    }
+}
+
+int main(void) {
+    for (int i = 0; i < N; i++) {
+        a[i] = i;
+        b[i] = i;
+    }
+
+    for (int iter = 0; iter < ITERS; iter++) {
+        vec_add(a, b, c, N);
+    }
+
+    /* Prevent optimizer from eliminating the loop */
+    printf("c[0]=%d c[%d]=%d\n", c[0], N - 1, c[N - 1]);
+    return 0;
+}
